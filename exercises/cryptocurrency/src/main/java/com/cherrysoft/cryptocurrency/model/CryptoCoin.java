@@ -4,6 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @Entity
 @Table(name = "crypto_coins")
@@ -15,8 +18,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class CryptoCoin {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private String id;
 
   @Column
   private String name;

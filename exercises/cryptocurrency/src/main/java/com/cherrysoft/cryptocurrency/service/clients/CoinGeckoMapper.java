@@ -11,7 +11,6 @@ import java.util.List;
 public interface CoinGeckoMapper {
 
   @Mappings({
-      @Mapping(target = "id", ignore = true),
       @Mapping(target = "imageUrl", source = "image"),
       @Mapping(target = "marketCapital", source = "marketCap"),
       @Mapping(target = "marketCapitalRanking", source = "marketCapRank"),
