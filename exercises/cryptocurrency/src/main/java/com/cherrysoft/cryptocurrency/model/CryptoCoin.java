@@ -6,14 +6,14 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "coins")
+@Table(name = "crypto_coins")
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Coin {
+public class CryptoCoin {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

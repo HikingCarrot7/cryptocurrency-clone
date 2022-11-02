@@ -1,6 +1,6 @@
 package com.cherrysoft.cryptocurrency.service.clients;
 
-import com.cherrysoft.cryptocurrency.model.Coin;
+import com.cherrysoft.cryptocurrency.model.CryptoCoin;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -18,8 +18,8 @@ public interface CoinGeckoMapper {
       @Mapping(target = "higherIn24Hours", source = "high_24h"),
       @Mapping(target = "lowerIn24Hours", source = "low_24h")
   })
-  Coin toCoin(CoinGecko coinGecko);
+  CryptoCoin toCryptoCoin(CoinGecko coinGecko);
 
-  List<Coin> mapToCoinList(List<CoinGecko> coinGecko);
+  List<CryptoCoin> toCryptoCoinList(List<CoinGecko> coinGecko);
 
 }

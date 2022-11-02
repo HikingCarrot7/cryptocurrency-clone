@@ -1,7 +1,7 @@
 package com.cherrysoft.cryptocurrency.controller;
 
 import com.cherrysoft.cryptocurrency.AbstractIntegrationTest;
-import com.cherrysoft.cryptocurrency.model.Coin;
+import com.cherrysoft.cryptocurrency.model.CryptoCoin;
 import com.cherrysoft.cryptocurrency.util.TestUtils;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
@@ -9,15 +9,15 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-class CoinControllerIntegrationTest extends AbstractIntegrationTest {
+class CryptoControllerIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void givenAValidCoin_thenCreatesCoin_andReturns201StatusCode_andIdIsNotNull() {
     given(requestSpecification)
         .with()
-        .body(TestUtils.CryptoCoin.createCryptoCoin())
+        .body(TestUtils.Crypto.createCryptoCoin())
         .when()
-        .post(CoinController.BASE_URL)
+        .post(CryptoCoinController.BASE_URL)
         .then()
         .statusCode(201)
         .contentType(ContentType.JSON)
@@ -26,14 +26,14 @@ class CoinControllerIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void givenCoinWithInvalidName_thenReturns400StatusCode_andAValidationErrorOnNameAttrib() {
-    Coin cryptoCoin = TestUtils.CryptoCoin.createCryptoCoin();
+    CryptoCoin cryptoCoin = TestUtils.Crypto.createCryptoCoin();
     cryptoCoin.setName(null);
 
     given(requestSpecification)
         .with()
         .body(cryptoCoin)
         .when()
-        .post(CoinController.BASE_URL)
+        .post(CryptoCoinController.BASE_URL)
         .then()
         .statusCode(400)
         .contentType(ContentType.JSON)

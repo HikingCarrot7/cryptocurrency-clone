@@ -1,21 +1,19 @@
 package com.cherrysoft.cryptocurrency.controller.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CoinDTO {
-  @Null
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private final Long id;
+public class CryptoCoinDTO {
+  private final String id;
 
   @NotNull
   private final String name;
