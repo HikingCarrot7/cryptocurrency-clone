@@ -2,9 +2,11 @@ package com.cherrysoft.cryptocurrency.service;
 
 import com.cherrysoft.cryptocurrency.exception.CryptoCoinNotFoundException;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
+import com.cherrysoft.cryptocurrency.model.CryptoUser;
 import com.cherrysoft.cryptocurrency.repository.CryptoCoinRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,10 +33,25 @@ public class CryptoCoinService {
     return cryptoCoinRepository.save(cryptoCoin);
   }
 
-  public CryptoCoin toggleFavorite(String id) {
-    CryptoCoin cryptoCoin = getCryptoCoin(id);
-    cryptoCoin.setIsFavorite(!cryptoCoin.isFavorite());
-    return cryptoCoinRepository.save(cryptoCoin);
+  @Transactional
+  public CryptoCoin addCryptoCoinTo(String username, CryptoCoin cryptoCoin) {
+    CryptoUser cryptoUser = cryptoUserService.getCryptoUserByUsername(username);
+    cryptoCoin.setPublic(false);
+    cryptoUser.addCryptoCoin(cryptoCoin);
+    return saveCryptoCoin(cryptoCoin);
+  }
+
+  @Transactional
+  public boolean toggleFavorite(String username, String cryptoCoinId) {
+    CryptoUser cryptoUser = cryptoUserService.getCryptoUserByUsername(username);
+    CryptoCoin cryptoCoin = getCryptoCoin(cryptoCoinId);
+    if (cryptoUser.isFavorite(cryptoCoin)) {
+      cryptoUser.removeFavorite(cryptoCoin);
+      return false;
+    } else {
+      cryptoUser.addFavorite(cryptoCoin);
+      return true;
+    }
   }
 
 }
