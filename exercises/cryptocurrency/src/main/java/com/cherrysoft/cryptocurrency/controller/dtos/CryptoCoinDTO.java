@@ -42,4 +42,11 @@ public class CryptoCoinDTO {
   @NotNull
   private final BigDecimal lowerIn24Hours;
 
+  @Getter(AccessLevel.NONE)
+  private final boolean isPublic;
+
+  public boolean getIsPublic() {
+    return isPublic;
+  }
+
 }

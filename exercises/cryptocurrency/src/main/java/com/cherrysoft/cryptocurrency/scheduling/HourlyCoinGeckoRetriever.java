@@ -20,6 +20,7 @@ public class HourlyCoinGeckoRetriever {
   public void scheduleCoinGeckoServiceRetrieval() {
     List<CryptoCoin> fetchedCryptos = coinGeckoService.fetchCryptoCoins();
     for (CryptoCoin fetchedCrypto : fetchedCryptos) {
+      fetchedCrypto.setPublic(true);
       cryptoCoinService.getCryptoCoinOptional(fetchedCrypto.getId())
           .ifPresentOrElse(
               (savedCrypto) -> {
