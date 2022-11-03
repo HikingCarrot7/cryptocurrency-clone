@@ -4,7 +4,11 @@ import com.cherrysoft.cryptocurrency.exception.CryptoCoinNotFoundException;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
 import com.cherrysoft.cryptocurrency.model.CryptoUser;
 import com.cherrysoft.cryptocurrency.repository.CryptoCoinRepository;
+import com.cherrysoft.cryptocurrency.service.criteria.CryptoCoinFilterCriteria;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +18,21 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CryptoCoinService {
+  private final CryptoUserService cryptoUserService;
   private final CryptoCoinRepository cryptoCoinRepository;
 
-  public List<CryptoCoin> getCryptoCoins() {
-    return cryptoCoinRepository.findAll();
+  public List<CryptoCoin> getCryptoCoins(String username, CryptoCoinFilterCriteria criteria) {
+    Pageable page = PageRequest.of(criteria.page(), criteria.pageSize(), Sort.by("currentPrice").descending());
+    if (criteria.filterByFavoriteCoins()) {
+      return cryptoCoinRepository.findAllCryptoCoinsMarkedFavoriteBy(username, page);
+    }
+    if (criteria.filterByOwnedCoins()) {
+      return cryptoCoinRepository.findAllCryptoCoinsOwnedBy(username, page);
+    }
+    if (criteria.filterByPublicCoins()) {
+      return cryptoCoinRepository.findAllByIsPublicTrue(page);
+    }
+    return cryptoCoinRepository.findAllPublicAndOwnedByCryptoCoins(username, page);
   }
 
   public Optional<CryptoCoin> getCryptoCoinOptional(String id) {
