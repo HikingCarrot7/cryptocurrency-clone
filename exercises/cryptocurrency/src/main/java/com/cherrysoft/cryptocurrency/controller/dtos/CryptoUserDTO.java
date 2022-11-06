@@ -1,10 +1,9 @@
 package com.cherrysoft.cryptocurrency.controller.dtos;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -22,6 +21,13 @@ public class CryptoUserDTO {
 
   @NotBlank(message = "Enter password")
   @Size(min = 8, max = 20, message = "Password should be between {min} and {max} characters")
-  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  @JsonProperty
+  @Getter(AccessLevel.NONE)
   private final String password;
+
+  @JsonIgnore
+  public String getPassword() {
+    return password;
+  }
+
 }

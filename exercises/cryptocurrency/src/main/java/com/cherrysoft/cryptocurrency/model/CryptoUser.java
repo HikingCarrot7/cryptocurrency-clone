@@ -1,8 +1,6 @@
 package com.cherrysoft.cryptocurrency.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -14,6 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class CryptoUser {
@@ -27,7 +26,6 @@ public class CryptoUser {
 
   @Column(nullable = false)
   private String password;
-
   @OneToMany(
       mappedBy = "owner",
       cascade = CascadeType.ALL,
@@ -44,6 +42,12 @@ public class CryptoUser {
   )
   @ToString.Exclude
   private Set<CryptoCoin> favoriteCoins = new LinkedHashSet<>();
+
+  @Builder
+  public CryptoUser(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
 
   public void addCryptoCoin(CryptoCoin cryptoCoin) {
     ownedCoins.add(cryptoCoin);

@@ -27,7 +27,7 @@ public class LoginService {
     var authenticationToken = new UsernamePasswordAuthenticationToken(cryptoUser.getUsername(), cryptoUser.getPassword());
     Authentication authentication = authenticationManager.authenticate(authenticationToken);
     return new LoginResponseDTO(
-        authentication.getPrincipal().toString(),
+        authentication.getName(),
         generateToken(authentication)
     );
   }

@@ -1,7 +1,8 @@
 package com.cherrysoft.cryptocurrency.util;
 
 import com.cherrysoft.cryptocurrency.config.FakerConfig;
-import com.cherrysoft.cryptocurrency.model.Coin;
+import com.cherrysoft.cryptocurrency.model.CryptoCoin;
+import com.cherrysoft.cryptocurrency.model.CryptoUser;
 import com.github.javafaker.Faker;
 
 import java.math.BigDecimal;
@@ -9,10 +10,10 @@ import java.math.BigDecimal;
 public class TestUtils {
   public static Faker faker = FakerConfig.FAKER_INSTANCE;
 
-  public static class CryptoCoin {
+  public static class Crypto {
 
-    public static Coin createCryptoCoin() {
-      return Coin.builder()
+    public static CryptoCoin createCryptoCoin() {
+      return CryptoCoin.builder()
           .name(faker.funnyName().name())
           .symbol(faker.animal().name())
           .imageUrl(faker.internet().url())
@@ -22,6 +23,14 @@ public class TestUtils {
           .marketCapitalRanking(faker.number().numberBetween(1, 30))
           .higherIn24Hours(randomBigDecimal())
           .lowerIn24Hours(randomBigDecimal())
+          .isPublic(false)
+          .build();
+    }
+
+    public static CryptoUser createCryptoUser() {
+      return CryptoUser.builder()
+          .username(faker.name().username())
+          .password("password")
           .build();
     }
 

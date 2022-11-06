@@ -1,9 +1,6 @@
 package com.cherrysoft.cryptocurrency.exception.handler;
 
-import com.cherrysoft.cryptocurrency.exception.ApplicationException;
-import com.cherrysoft.cryptocurrency.exception.BadCredentialsException;
-import com.cherrysoft.cryptocurrency.exception.ErrorResponse;
-import com.cherrysoft.cryptocurrency.exception.UsernameAlreadyTaken;
+import com.cherrysoft.cryptocurrency.exception.*;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -28,6 +25,11 @@ public class ApplicationExceptionHandler {
   @ExceptionHandler(UsernameAlreadyTaken.class)
   public ResponseEntity<Object> appExceptionHandler(final UsernameAlreadyTaken e) {
     return throwCustomException(e, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(CryptoUserNotFoundException.class)
+  public ResponseEntity<Object> appExceptionHandler(final CryptoUserNotFoundException e) {
+    return throwCustomException(e, HttpStatus.NOT_FOUND);
   }
 
   private ResponseEntity<Object> throwCustomException(final RuntimeException e, final HttpStatus status) {
