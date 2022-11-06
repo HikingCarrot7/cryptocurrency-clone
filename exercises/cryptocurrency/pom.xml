@@ -24,6 +24,7 @@
     <testcontainers.version>1.17.5</testcontainers.version>
     <rest-assured.version>5.2.0</rest-assured.version>
     <faker.version>1.0.2</faker.version>
+    <springdoc-openapi-ui.version>1.6.12</springdoc-openapi-ui.version>
   </properties>
 
   <dependencyManagement>
@@ -62,6 +63,11 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-openfeign</artifactId>
       <version>3.1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>${springdoc-openapi-ui.version}</version>
     </dependency>
 
     <dependency>

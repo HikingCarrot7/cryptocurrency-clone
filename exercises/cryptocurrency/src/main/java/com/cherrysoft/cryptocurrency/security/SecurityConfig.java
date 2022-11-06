@@ -43,7 +43,7 @@ public class SecurityConfig {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeRequests(auth -> auth
-            .mvcMatchers("/login", "/register").permitAll()
+            .antMatchers("/login", "/register", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
             .anyRequest().authenticated()
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
