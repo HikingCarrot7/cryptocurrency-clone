@@ -17,8 +17,8 @@ import java.util.Set;
 @Table(name = "users")
 public class CryptoUser {
   @Id
-  @Column(name = "user_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "user_id")
   private Long id;
 
   @Column(unique = true, nullable = false)
@@ -26,6 +26,7 @@ public class CryptoUser {
 
   @Column(nullable = false)
   private String password;
+
   @OneToMany(
       mappedBy = "owner",
       cascade = CascadeType.ALL,

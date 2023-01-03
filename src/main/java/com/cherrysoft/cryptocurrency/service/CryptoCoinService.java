@@ -3,12 +3,13 @@ package com.cherrysoft.cryptocurrency.service;
 import com.cherrysoft.cryptocurrency.exception.CryptoCoinNotFoundException;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
 import com.cherrysoft.cryptocurrency.model.CryptoUser;
+import com.cherrysoft.cryptocurrency.model.FavoriteResult;
 import com.cherrysoft.cryptocurrency.repository.CryptoCoinRepository;
+import com.cherrysoft.cryptocurrency.repository.CryptoUserRepository;
 import com.cherrysoft.cryptocurrency.service.criteria.CryptoCoinFilterCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class CryptoCoinService {
   private final CryptoUserService cryptoUserService;
   private final CryptoCoinRepository cryptoCoinRepository;
+  private final CryptoUserRepository cryptoUserRepository;
 
   public List<CryptoCoin> getCryptoCoins(String username, CryptoCoinFilterCriteria criteria) {
     Pageable pageable = criteria.getPageable();
@@ -46,7 +48,6 @@ public class CryptoCoinService {
     return cryptoCoinRepository.save(cryptoCoin);
   }
 
-  @Transactional
   public CryptoCoin addCryptoCoinTo(String username, CryptoCoin cryptoCoin) {
     CryptoUser cryptoUser = cryptoUserService.getCryptoUserByUsername(username);
     cryptoCoin.setPublic(false);
@@ -54,17 +55,17 @@ public class CryptoCoinService {
     return saveCryptoCoin(cryptoCoin);
   }
 
-  @Transactional
-  public boolean toggleFavorite(String username, String cryptoCoinId) {
+  public FavoriteResult markAsFavorite(String username, String cryptoCoinId) {
     CryptoUser cryptoUser = cryptoUserService.getCryptoUserByUsername(username);
     CryptoCoin cryptoCoin = getCryptoCoin(cryptoCoinId);
-    if (cryptoUser.isFavorite(cryptoCoin)) {
+    boolean wasMarkedAsFavorite = cryptoUser.isFavorite(cryptoCoin);
+    if (wasMarkedAsFavorite) {
       cryptoUser.removeFavorite(cryptoCoin);
-      return false;
     } else {
       cryptoUser.addFavorite(cryptoCoin);
-      return true;
     }
+    cryptoUserRepository.saveAndFlush(cryptoUser);
+    return new FavoriteResult(wasMarkedAsFavorite, !wasMarkedAsFavorite);
   }
 
 }

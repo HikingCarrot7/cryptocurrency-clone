@@ -56,8 +56,8 @@ public class CryptoCoin {
   @Getter(AccessLevel.NONE)
   private boolean isPublic = false;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(columnDefinition = "integer", name = "owner_id")
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "owner_id", referencedColumnName = "user_id")
   @ToString.Exclude
   private CryptoUser owner;
 
