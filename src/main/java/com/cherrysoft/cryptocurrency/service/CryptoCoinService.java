@@ -8,10 +8,10 @@ import com.cherrysoft.cryptocurrency.repository.CryptoCoinRepository;
 import com.cherrysoft.cryptocurrency.repository.CryptoUserRepository;
 import com.cherrysoft.cryptocurrency.service.criteria.CryptoCoinFilterCriteria;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,7 +21,7 @@ public class CryptoCoinService {
   private final CryptoCoinRepository cryptoCoinRepository;
   private final CryptoUserRepository cryptoUserRepository;
 
-  public List<CryptoCoin> getCryptoCoins(String username, CryptoCoinFilterCriteria criteria) {
+  public Page<CryptoCoin> getCryptoCoins(String username, CryptoCoinFilterCriteria criteria) {
     Pageable pageable = criteria.getPageable();
     if (criteria.filterByFavoriteCoins()) {
       return cryptoCoinRepository.findAllCryptoCoinsMarkedFavoriteBy(username, pageable);

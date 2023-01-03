@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Getter
 @Setter
@@ -71,6 +72,10 @@ public class CryptoCoin {
     if (isNull(getId())) {
       setId(UUID.randomUUID().toString());
     }
+  }
+
+  public boolean hasOwner() {
+    return nonNull(owner);
   }
 
   @Override
