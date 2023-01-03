@@ -1,8 +1,8 @@
-package com.cherrysoft.cryptocurrency.controller;
+package com.cherrysoft.cryptocurrency.web.controller;
 
-import com.cherrysoft.cryptocurrency.controller.dtos.CryptoUserDTO;
-import com.cherrysoft.cryptocurrency.controller.dtos.LoginResponseDTO;
-import com.cherrysoft.cryptocurrency.mapper.CryptoUserMapper;
+import com.cherrysoft.cryptocurrency.web.dtos.CryptoUserDTO;
+import com.cherrysoft.cryptocurrency.web.dtos.LoginResponseDTO;
+import com.cherrysoft.cryptocurrency.web.mapper.CryptoUserMapper;
 import com.cherrysoft.cryptocurrency.model.CryptoUser;
 import com.cherrysoft.cryptocurrency.security.SecurityCryptoUser;
 import com.cherrysoft.cryptocurrency.security.TokenGenerator;

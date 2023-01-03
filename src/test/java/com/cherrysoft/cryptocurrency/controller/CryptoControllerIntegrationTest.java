@@ -3,6 +3,7 @@ package com.cherrysoft.cryptocurrency.controller;
 import com.cherrysoft.cryptocurrency.AbstractIntegrationTest;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
 import com.cherrysoft.cryptocurrency.util.TestUtils;
+import com.cherrysoft.cryptocurrency.web.controller.CryptoCoinController;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 

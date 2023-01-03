@@ -1,12 +1,13 @@
-package com.cherrysoft.cryptocurrency.controller;
+package com.cherrysoft.cryptocurrency.web.controller;
 
-import com.cherrysoft.cryptocurrency.controller.dtos.CryptoCoinDTO;
-import com.cherrysoft.cryptocurrency.mapper.CryptoCoinMapper;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
 import com.cherrysoft.cryptocurrency.model.FavoriteResult;
 import com.cherrysoft.cryptocurrency.security.utils.AuthenticationUtils;
 import com.cherrysoft.cryptocurrency.service.CryptoCoinService;
 import com.cherrysoft.cryptocurrency.service.criteria.CryptoCoinFilterCriteria;
+import com.cherrysoft.cryptocurrency.web.dtos.CryptoCoinDTO;
+import com.cherrysoft.cryptocurrency.web.hateoas.CryptoCoinModelAssembler;
+import com.cherrysoft.cryptocurrency.web.mapper.CryptoCoinMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -17,18 +18,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.data.web.SortDefault;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Map;
 
 import static com.cherrysoft.cryptocurrency.util.ApiDocsConstants.*;
@@ -49,6 +51,8 @@ public class CryptoCoinController {
   private final CryptoCoinService cryptoCoinService;
   private final CryptoCoinMapper cryptoCoinMapper;
   private final AuthenticationUtils authenticationUtils;
+  private final CryptoCoinModelAssembler cryptoCoinModelAssembler;
+  private final PagedResourcesAssembler<CryptoCoin> cryptoCoinPagedResourcesAssembler;
 
   @Operation(summary = "Get crypto coins")
   @ApiResponse(responseCode = "200", description = "OK", content = {
@@ -59,7 +63,7 @@ public class CryptoCoinController {
   @Parameter(name = "owned", description = "Return owned coins", schema = @Schema(type = "string"))
   @Parameter(name = "all", description = "Return all coins", schema = @Schema(type = "string"))
   @GetMapping
-  public ResponseEntity<List<CryptoCoinDTO>> getCryptoCoins(
+  public PagedModel<CryptoCoinDTO> getCryptoCoins(
       @RequestParam @Parameter(hidden = true) Map<String, String> options,
       @ParameterObject
       @PageableDefault
@@ -68,24 +72,24 @@ public class CryptoCoinController {
   ) {
     String username = authenticationUtils.getUsername();
     CryptoCoinFilterCriteria filterCriteria = new CryptoCoinFilterCriteria(options, pageable);
-    List<CryptoCoin> cryptoCoins = cryptoCoinService.getCryptoCoins(username, filterCriteria);
-    return ResponseEntity.ok(cryptoCoinMapper.toCryptoCoinDtoList(cryptoCoins));
+    Page<CryptoCoin> result = cryptoCoinService.getCryptoCoins(username, filterCriteria);
+    return cryptoCoinPagedResourcesAssembler.toModel(result, cryptoCoinModelAssembler);
   }
 
   @Operation(summary = "Create crypto coin for logged user")
-  @ApiResponse(responseCode = "201", description = "Created", content = {
+  @ApiResponse(responseCode = "201", description = "Crypto coin created", content = {
       @Content(schema = @Schema(implementation = CryptoCoinDTO.class))
   })
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<CryptoCoinDTO> saveCryptoCoin(
       @RequestBody @Valid CryptoCoinDTO cryptoCoinDto
-  ) throws URISyntaxException {
+  ) {
     String username = authenticationUtils.getUsername();
-    CryptoCoin newCryptoCoin = cryptoCoinService.addCryptoCoinTo(username, cryptoCoinMapper.toCryptoCoin(cryptoCoinDto));
+    CryptoCoin result = cryptoCoinService.addCryptoCoinTo(username, cryptoCoinMapper.toCryptoCoin(cryptoCoinDto));
     return ResponseEntity
-        .created(new URI(String.format("%s/%s", BASE_URL, newCryptoCoin.getId())))
-        .body(cryptoCoinMapper.toCryptoCoinDto(newCryptoCoin));
+        .created(URI.create(String.format("%s/%s", BASE_URL, result.getId())))
+        .body(cryptoCoinModelAssembler.toModel(result));
   }
 
   @Operation(summary = "Mark the crypto coin with the provided ID as favorite")

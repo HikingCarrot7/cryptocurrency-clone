@@ -1,6 +1,6 @@
 package com.cherrysoft.cryptocurrency.security;
 
-import com.cherrysoft.cryptocurrency.controller.dtos.LoginResponseDTO;
+import com.cherrysoft.cryptocurrency.web.dtos.LoginResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;

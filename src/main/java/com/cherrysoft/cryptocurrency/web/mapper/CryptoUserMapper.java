@@ -1,6 +1,6 @@
-package com.cherrysoft.cryptocurrency.mapper;
+package com.cherrysoft.cryptocurrency.web.mapper;
 
-import com.cherrysoft.cryptocurrency.controller.dtos.CryptoUserDTO;
+import com.cherrysoft.cryptocurrency.web.dtos.CryptoUserDTO;
 import com.cherrysoft.cryptocurrency.model.CryptoUser;
 import org.mapstruct.Mapper;
 
