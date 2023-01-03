@@ -1,17 +1,20 @@
-package com.cherrysoft.cryptocurrency.web.controller.dtos;
+package com.cherrysoft.cryptocurrency.web.dtos;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
-@RequiredArgsConstructor
 @Builder
-public class CryptoUserDTO {
+@EqualsAndHashCode(callSuper = true)
+@Relation(itemRelation = "user", collectionRelation = "users")
+public class CryptoUserDTO extends RepresentationModel<CryptoUserDTO> {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private final Long id;
 
@@ -21,7 +24,7 @@ public class CryptoUserDTO {
 
   @NotBlank(message = "Enter password")
   @Size(min = 8, max = 20, message = "Password should be between {min} and {max} characters")
-  @JsonProperty
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @Getter(AccessLevel.NONE)
   private final String password;
 

@@ -1,18 +1,19 @@
-package com.cherrysoft.cryptocurrency.web.controller.dtos;
+package com.cherrysoft.cryptocurrency.web.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
 @Builder
+@EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CryptoCoinDTO {
+@Relation(itemRelation = "coin", collectionRelation = "coins")
+public class CryptoCoinDTO extends RepresentationModel<CryptoCoinDTO> {
   private final String id;
 
   @NotNull
