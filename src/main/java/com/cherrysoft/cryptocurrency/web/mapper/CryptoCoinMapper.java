@@ -1,4 +1,4 @@
-package com.cherrysoft.cryptocurrency.mapper;
+package com.cherrysoft.cryptocurrency.web.mapper;
 
 import com.cherrysoft.cryptocurrency.web.controller.dtos.CryptoCoinDTO;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
