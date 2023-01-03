@@ -1,41 +1,49 @@
 package com.cherrysoft.cryptocurrency.security;
 
-import com.cherrysoft.cryptocurrency.security.service.CustomUserDetailsService;
-import com.nimbusds.jose.JOSEException;
+import com.cherrysoft.cryptocurrency.security.service.CryptoUserDetailsService;
+import com.cherrysoft.cryptocurrency.security.support.KeyPairProvider;
+import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-  private RSAKey rsaKey;
+  private final PasswordEncoder passwordEncoder;
+  private final JwtToCryptoUserConverter jwtToUserConverter;
+  private final KeyPairProvider keyPairProvider;
+  private static final String[] AUTH_WHITELIST = {
+      "/login",
+      "/register",
+      "/swagger-ui/**",
+      "/swagger-resources/**",
+      "/v3/api-docs/**"
+  };
 
   @Bean
-  public AuthenticationManager authManager(CustomUserDetailsService customUserDetailsService) {
+  DaoAuthenticationProvider authManager(CryptoUserDetailsService cryptoUserDetailsService) {
     var authProvider = new DaoAuthenticationProvider();
-    authProvider.setUserDetailsService(customUserDetailsService);
-    authProvider.setPasswordEncoder(passwordEncoder());
-    return new ProviderManager(authProvider);
+    authProvider.setUserDetailsService(cryptoUserDetailsService);
+    authProvider.setPasswordEncoder(passwordEncoder);
+    return authProvider;
   }
 
   @Bean
@@ -43,34 +51,34 @@ public class SecurityConfig {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeRequests(auth -> auth
-            .antMatchers("/login", "/register", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
+            .antMatchers(AUTH_WHITELIST).permitAll()
             .anyRequest().authenticated()
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+        .oauth2ResourceServer(oauth2 ->
+            oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter))
+        )
+        .exceptionHandling(exceptions -> exceptions
+            .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+            .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+        )
         .build();
   }
 
   @Bean
-  public JWKSource<SecurityContext> jwkSource() {
-    rsaKey = Jwks.generateRsa();
-    JWKSet jwkSet = new JWKSet(rsaKey);
-    return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
+  JwtEncoder jwtEncoder() {
+    JWK jwk = new RSAKey
+        .Builder(keyPairProvider.getAccessTokenPublicKey())
+        .privateKey(keyPairProvider.getAccessTokenPrivateKey())
+        .build();
+    return new NimbusJwtEncoder(new ImmutableJWKSet<>(new JWKSet(jwk)));
   }
 
   @Bean
-  JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwks) {
-    return new NimbusJwtEncoder(jwks);
-  }
-
-  @Bean
-  JwtDecoder jwtDecoder() throws JOSEException {
-    return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
-  }
-
-  @Bean
-  public BCryptPasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(10);
+  JwtDecoder jwtDecoder() {
+    return NimbusJwtDecoder
+        .withPublicKey(keyPairProvider.getAccessTokenPublicKey())
+        .build();
   }
 
 }
