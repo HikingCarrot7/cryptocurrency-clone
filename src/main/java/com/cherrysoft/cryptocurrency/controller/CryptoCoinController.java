@@ -51,24 +51,14 @@ public class CryptoCoinController {
   private final CryptoCoinMapper cryptoCoinMapper;
   private final AuthenticationUtils authenticationUtils;
 
-  @Operation(summary = "Get crypto coins", description = "Description")
+  @Operation(summary = "Get crypto coins")
   @ApiResponse(responseCode = "200", description = "OK", content = {
       @Content(array = @ArraySchema(schema = @Schema(implementation = CryptoCoinDTO.class)))
   })
-  @Parameters({
-      @Parameter(in = ParameterIn.QUERY, name = "favorite", schema = @Schema(type = "string"),
-          description = "Return user's favorite coins"
-      ),
-      @Parameter(in = ParameterIn.QUERY, name = "public", schema = @Schema(type = "string"),
-          description = "Return all public coins"
-      ),
-      @Parameter(in = ParameterIn.QUERY, name = "owned", schema = @Schema(type = "string"),
-          description = "Return owned coins"
-      ),
-      @Parameter(in = ParameterIn.QUERY, name = "all", schema = @Schema(type = "string"),
-          description = "Return public and owned coins"
-      )
-  })
+  @Parameter(name = "favorite", description = "Return user's favorite coins", schema = @Schema(type = "string"))
+  @Parameter(name = "public", description = "Return all public coins", schema = @Schema(type = "string"))
+  @Parameter(name = "owned", description = "Return owned coins", schema = @Schema(type = "string"))
+  @Parameter(name = "all", description = "Return all coins", schema = @Schema(type = "string"))
   @GetMapping
   public ResponseEntity<List<CryptoCoinDTO>> getCryptoCoins(
       @RequestParam @Parameter(hidden = true) Map<String, String> options,
@@ -83,7 +73,7 @@ public class CryptoCoinController {
     return ResponseEntity.ok(cryptoCoinMapper.toCryptoCoinDtoList(cryptoCoins));
   }
 
-  @Operation(summary = "Create crypto coin for logged user", description = "Description")
+  @Operation(summary = "Create crypto coin for logged user")
   @ApiResponse(responseCode = "201", description = "Created", content = {
       @Content(schema = @Schema(implementation = CryptoCoinDTO.class))
   })
@@ -99,7 +89,7 @@ public class CryptoCoinController {
         .body(cryptoCoinMapper.toCryptoCoinDto(newCryptoCoin));
   }
 
-  @Operation(summary = "Toggle crypto coin with {id} as favorite", description = "Description")
+  @Operation(summary = "Mark the crypto coin with the provided ID as favorite")
   @ApiResponse(responseCode = "200", description = "OK", content = {
       @Content(schema = @Schema(type = "boolean"))
   })
