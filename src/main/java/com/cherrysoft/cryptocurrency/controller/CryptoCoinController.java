@@ -3,13 +3,12 @@ package com.cherrysoft.cryptocurrency.controller;
 import com.cherrysoft.cryptocurrency.controller.dtos.CryptoCoinDTO;
 import com.cherrysoft.cryptocurrency.mapper.CryptoCoinMapper;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
+import com.cherrysoft.cryptocurrency.model.FavoriteResult;
 import com.cherrysoft.cryptocurrency.security.utils.AuthenticationUtils;
 import com.cherrysoft.cryptocurrency.service.CryptoCoinService;
 import com.cherrysoft.cryptocurrency.service.criteria.CryptoCoinFilterCriteria;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -91,13 +90,13 @@ public class CryptoCoinController {
 
   @Operation(summary = "Mark the crypto coin with the provided ID as favorite")
   @ApiResponse(responseCode = "200", description = "OK", content = {
-      @Content(schema = @Schema(type = "boolean"))
+      @Content(schema = @Schema(implementation = FavoriteResult.class))
   })
-  @PutMapping("/{id}/toggle-favorite")
-  public ResponseEntity<Boolean> toggleFavorite(@PathVariable String id) {
+  @PatchMapping("/favorite")
+  public ResponseEntity<FavoriteResult> markAsFavorite(@RequestParam String coinId) {
     String username = authenticationUtils.getUsername();
-    boolean newState = cryptoCoinService.toggleFavorite(username, id);
-    return ResponseEntity.ok(newState);
+    FavoriteResult result = cryptoCoinService.markAsFavorite(username, coinId);
+    return ResponseEntity.ok(result);
   }
 
 }
