@@ -6,9 +6,7 @@ import com.cherrysoft.cryptocurrency.model.CryptoUser;
 import com.cherrysoft.cryptocurrency.repository.CryptoCoinRepository;
 import com.cherrysoft.cryptocurrency.service.criteria.CryptoCoinFilterCriteria;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,17 +20,17 @@ public class CryptoCoinService {
   private final CryptoCoinRepository cryptoCoinRepository;
 
   public List<CryptoCoin> getCryptoCoins(String username, CryptoCoinFilterCriteria criteria) {
-    Pageable page = PageRequest.of(criteria.page(), criteria.pageSize(), Sort.by("currentPrice").descending());
+    Pageable pageable = criteria.getPageable();
     if (criteria.filterByFavoriteCoins()) {
-      return cryptoCoinRepository.findAllCryptoCoinsMarkedFavoriteBy(username, page);
+      return cryptoCoinRepository.findAllCryptoCoinsMarkedFavoriteBy(username, pageable);
     }
     if (criteria.filterByOwnedCoins()) {
-      return cryptoCoinRepository.findAllCryptoCoinsOwnedBy(username, page);
+      return cryptoCoinRepository.findAllCryptoCoinsOwnedBy(username, pageable);
     }
     if (criteria.filterByPublicCoins()) {
-      return cryptoCoinRepository.findAllByIsPublicTrue(page);
+      return cryptoCoinRepository.findAllByIsPublicTrue(pageable);
     }
-    return cryptoCoinRepository.findAllPublicAndOwnedByCryptoCoins(username, page);
+    return cryptoCoinRepository.findAllPublicAndOwnedByCryptoCoins(username, pageable);
   }
 
   public Optional<CryptoCoin> getCryptoCoinOptional(String id) {

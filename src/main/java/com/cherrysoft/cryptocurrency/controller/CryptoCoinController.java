@@ -17,6 +17,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,10 +73,11 @@ public class CryptoCoinController {
   @Operation(summary = "Get crypto coins", description = "Description")
   @GetMapping
   public ResponseEntity<List<CryptoCoinDTO>> getCryptoCoins(
-      @RequestParam @Parameter(hidden = true) Map<String, String> options
+      @RequestParam @Parameter(hidden = true) Map<String, String> options,
+      @PageableDefault @SortDefault(sort = "currentPrice", direction = Sort.Direction.DESC) Pageable pageable
   ) {
     String username = authenticationUtils.getUsername();
-    CryptoCoinFilterCriteria filterCriteria = new CryptoCoinFilterCriteria(options);
+    CryptoCoinFilterCriteria filterCriteria = new CryptoCoinFilterCriteria(options, pageable);
     List<CryptoCoin> cryptoCoins = cryptoCoinService.getCryptoCoins(username, filterCriteria);
     return ResponseEntity.ok(cryptoCoinMapper.toCryptoCoinDtoList(cryptoCoins));
   }
