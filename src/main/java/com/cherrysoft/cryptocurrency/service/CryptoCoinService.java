@@ -10,7 +10,6 @@ import com.cherrysoft.cryptocurrency.service.criteria.CryptoCoinFilterCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +48,6 @@ public class CryptoCoinService {
     return cryptoCoinRepository.save(cryptoCoin);
   }
 
-  @Transactional
   public CryptoCoin addCryptoCoinTo(String username, CryptoCoin cryptoCoin) {
     CryptoUser cryptoUser = cryptoUserService.getCryptoUserByUsername(username);
     cryptoCoin.setPublic(false);
@@ -57,7 +55,6 @@ public class CryptoCoinService {
     return saveCryptoCoin(cryptoCoin);
   }
 
-  @Transactional
   public FavoriteResult markAsFavorite(String username, String cryptoCoinId) {
     CryptoUser cryptoUser = cryptoUserService.getCryptoUserByUsername(username);
     CryptoCoin cryptoCoin = getCryptoCoin(cryptoCoinId);
