@@ -1,6 +1,6 @@
 package com.cherrysoft.cryptocurrency.mapper;
 
-import com.cherrysoft.cryptocurrency.controller.dtos.CryptoCoinDTO;
+import com.cherrysoft.cryptocurrency.web.controller.dtos.CryptoCoinDTO;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
 import org.mapstruct.Mapper;
 

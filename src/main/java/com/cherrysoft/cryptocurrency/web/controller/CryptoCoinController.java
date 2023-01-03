@@ -1,6 +1,6 @@
-package com.cherrysoft.cryptocurrency.controller;
+package com.cherrysoft.cryptocurrency.web.controller;
 
-import com.cherrysoft.cryptocurrency.controller.dtos.CryptoCoinDTO;
+import com.cherrysoft.cryptocurrency.web.controller.dtos.CryptoCoinDTO;
 import com.cherrysoft.cryptocurrency.mapper.CryptoCoinMapper;
 import com.cherrysoft.cryptocurrency.model.CryptoCoin;
 import com.cherrysoft.cryptocurrency.model.FavoriteResult;

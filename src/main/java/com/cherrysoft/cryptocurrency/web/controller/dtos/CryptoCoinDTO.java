@@ -1,4 +1,4 @@
-package com.cherrysoft.cryptocurrency.controller.dtos;
+package com.cherrysoft.cryptocurrency.web.controller.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;

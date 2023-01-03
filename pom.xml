@@ -19,12 +19,15 @@
 
   <properties>
     <java.version>11</java.version>
-    <spring-cloud.version>2021.0.4</spring-cloud.version>
     <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
-    <testcontainers.version>1.17.5</testcontainers.version>
-    <rest-assured.version>5.2.0</rest-assured.version>
-    <faker.version>1.0.2</faker.version>
+    <spring-cloud.version>2021.0.4</spring-cloud.version>
+    <spring-cloud-openfeign.version>3.1.4</spring-cloud-openfeign.version>
     <springdoc-openapi-ui.version>1.6.12</springdoc-openapi-ui.version>
+    <mysql-connector-java.version>8.0.31</mysql-connector-java.version>
+    <faker.version>1.0.2</faker.version>
+    <rest-assured.version>5.2.0</rest-assured.version>
+    <testcontainers.version>1.17.5</testcontainers.version>
+    <awaitility.version>4.2.0</awaitility.version>
   </properties>
 
   <dependencyManagement>
@@ -53,6 +56,10 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-hateoas</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
     </dependency>
     <dependency>
@@ -62,11 +69,16 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-openfeign</artifactId>
-      <version>3.1.4</version>
+      <version>${spring-cloud-openfeign.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-ui</artifactId>
+      <version>${springdoc-openapi-ui.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-hateoas</artifactId>
       <version>${springdoc-openapi-ui.version}</version>
     </dependency>
 
@@ -77,7 +89,7 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.31</version>
+      <version>${mysql-connector-java.version}</version>
     </dependency>
 
     <dependency>
@@ -143,7 +155,7 @@
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
-      <version>4.2.0</version>
+      <version>${awaitility.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

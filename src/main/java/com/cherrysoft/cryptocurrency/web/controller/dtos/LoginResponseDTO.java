@@ -1,4 +1,4 @@
-package com.cherrysoft.cryptocurrency.controller.dtos;
+package com.cherrysoft.cryptocurrency.web.controller.dtos;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
