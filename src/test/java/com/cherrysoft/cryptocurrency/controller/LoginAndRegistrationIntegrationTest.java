@@ -5,23 +5,37 @@ import com.cherrysoft.cryptocurrency.model.CryptoUser;
 import com.cherrysoft.cryptocurrency.util.TestUtils;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.restdocs.payload.FieldDescriptor;
 
+import static com.cherrysoft.cryptocurrency.support.SharedFieldDescriptors.ERROR_FIELD_DESCRIPTOR;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginAndRegistrationIntegrationTest extends AbstractIntegrationTest {
-  private static CryptoUser cryptoUser;
+  @Autowired private TestUtils testUtils;
+  private CryptoUser cryptoUser;
+
+  FieldDescriptor[] login = new FieldDescriptor[]{
+      fieldWithPath("username").description("The user's username"),
+      fieldWithPath("accessToken").description("The token for accessing the API endpoints")
+  };
 
   @BeforeAll
-  static void init() {
-    cryptoUser = TestUtils.Crypto.createCryptoUser();
+  void init() {
+    cryptoUser = testUtils.createCryptoUser();
   }
 
   @Test
   @Order(1)
   void givenValidUser_thenRegistrationIsSuccessfully() {
     given(requestSpecification)
+        .filter(document("register", responseFields(login)))
         .with()
         .body(cryptoUser)
         .when()
@@ -29,15 +43,16 @@ public class LoginAndRegistrationIntegrationTest extends AbstractIntegrationTest
         .then()
         .statusCode(200)
         .contentType(ContentType.JSON)
-        .body("id", is(notNullValue()))
         .body("username", is(cryptoUser.getUsername()))
-        .body(not(hasKey("password")));
+        .body("accessToken", is(notNullValue()))
+        .body(not(hasProperty("password")));
   }
 
   @Test
   @Order(2)
-  void givenAnAlreadyRegisterUsername_thenReturns400StatusCodeWithError() {
+  void givenAnAlreadyRegisterUsername_whenAttemptingRegister_thenReturns400StatusCodeWithError() {
     given(requestSpecification)
+        .filter(document("error", responseFields(ERROR_FIELD_DESCRIPTOR)))
         .with()
         .body(cryptoUser)
         .when()
@@ -52,6 +67,7 @@ public class LoginAndRegistrationIntegrationTest extends AbstractIntegrationTest
   @Order(3)
   void givenAnExistingUser_thenLoginIsSuccessfully() {
     given(requestSpecification)
+        .filter(document("login", responseFields(login)))
         .with()
         .body(cryptoUser)
         .when()
@@ -66,10 +82,11 @@ public class LoginAndRegistrationIntegrationTest extends AbstractIntegrationTest
   @Test
   @Order(4)
   void givenNonExistingUser_thenReturns400StatusCode_andAnError() {
-    CryptoUser cryptoUser = TestUtils.Crypto.createCryptoUser();
+    CryptoUser cryptoUser = testUtils.createCryptoUser();
     cryptoUser.setUsername("billowybead");
 
     given(requestSpecification)
+        .filter(document("error", responseFields(ERROR_FIELD_DESCRIPTOR)))
         .with()
         .body(cryptoUser)
         .when()
